@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addPost } from "../../redux/slices/postsSlice";
-import { useNavigate } from "react-router-dom";
+import { updatePost } from "../../redux/slices/postsSlice";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function NewPost() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [error, setError] = useState("");
+export default function EditPost() {
+  const { id } = useParams();
+  const post = useSelector((state) => state.posts.posts.find((p) => p.id === Number(id)));
+  const [title, setTitle] = useState(post?.title || "");
+  const [content, setContent] = useState(post?.body || "");
+  const [image, setImage] = useState(post?.image || "");
+  const [imagePreview, setImagePreview] = useState(post?.image || "");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.user);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -27,32 +27,13 @@ export default function NewPost() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title || !content) {
-      setError("Title and content are required.");
-      return;
-    }
-
-    const newPost = {
-      id: Date.now(),
-      username: user.username,
-      title,
-      body: content,
-      image: image || "/images/blog.png", // Use base64 image or default image
-    };
-
-    dispatch(addPost(newPost));
-    setTitle("");
-    setContent("");
-    setImage(null);
-    setImagePreview(null);
-    setError("");
-    navigate("/posts"); // Navigate to posts page after creating the post
+    dispatch(updatePost({ id: post.id, title, body: content, image }));
+    navigate("/posts");
   };
 
   return (
-    <div className="container py-4" style={{ maxWidth: "600px" }}>
-      <h2>Create New Post</h2>
-      {error && <p className="text-danger">{error}</p>}
+    <div className="container py-4">
+      <h2>Edit Post</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-floating mb-3">
           <input
@@ -97,11 +78,7 @@ export default function NewPost() {
             </div>
           )}
         </div>
-        <div className="d-flex justify-content-center align-items-center">
-          <button type="submit" className="btn btn-success" style={{ maxWidth: "200px" }}>
-            Publish
-          </button>
-        </div>
+        <button type="submit" className="btn btn-primary">Update Post</button>
       </form>
     </div>
   );

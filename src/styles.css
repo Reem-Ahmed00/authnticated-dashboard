@@ -54,7 +54,6 @@ ul {
 }
 
 li {
-  background: #f9f9f9;
   margin: 10px 0;
   padding: 15px;
   border-radius: 5px;
@@ -64,4 +63,20 @@ li {
 li h3 {
   margin: 0 0 10px;
   color: #007bff;
+}
+
+.card {
+  border-radius: 10px;
+}
+
+.card-title {
+  color: #007bff;
+}
+
+.card-text {
+  color: #555;
+}
+
+h3 {
+  color: #333;
 }

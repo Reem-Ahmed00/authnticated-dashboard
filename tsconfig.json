@@ -13,6 +13,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx" // ✅ This must be set!
+    "jsx": "react-jsx"
   }
 }

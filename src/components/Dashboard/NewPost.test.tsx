@@ -2,10 +2,9 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import NewPost from './NewPost';
-import { createTestStore } from '../../../testStore'; // adjust path if needed
+import { createTestStore } from '../../../testStore'; 
 import { useNavigate } from 'react-router-dom';
 
-// ✅ Mock useNavigate
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn(),

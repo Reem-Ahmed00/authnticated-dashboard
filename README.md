@@ -1,12 +1,59 @@
-# React + Vite
+🚀 React + Vite Project
+This project is a minimal setup using React with Vite for fast development and hot module replacement (HMR). It also includes ESLint for code quality and follows a modular architecture using Redux Toolkit and React Router.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+📦 Tech Stack
+React 18
 
-Currently, two official plugins are available:
+Vite (lightning-fast build tool)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+TypeScript (recommended)
 
-## Expanding the ESLint configuration
+Redux Toolkit (state management)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+React Router DOM (routing)
+
+json-server (mock backend API)
+
+Bootstrap (UI framework)
+
+⚙️ Getting Started
+1. Clone the repository
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
+
+2. Install dependencies
+npm install
+
+3. Start the development server
+Open two terminals:
+
+Terminal 1: Start Vite (React frontend)
+npm run dev
+
+Terminal 2: Start JSON Server (Mock backend)
+json-server --watch db.json --port 5000
+
+🧪 Running Tests
+This project uses Jest and React Testing Library.
+
+npm run test
+
+📁 Recommended Project Structure
+css
+Copy
+Edit
+src/
+├── components/
+├── pages/
+├── redux/
+│   ├── slices/
+│   └── store.ts
+├── App.tsx
+├── main.tsx
+
+✅ Tips
+Keep your API endpoints in a separate file (api.ts) for easy maintenance.
+
+Make sure the mock API (json-server) is running before using features that rely on API calls (e.g., fetching posts, login).
+
+You can edit db.json to customize your mock data.

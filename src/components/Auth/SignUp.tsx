@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { signupUser } from "../../redux/slices/authSlice";
 import { useNavigate, Link } from "react-router-dom";
 import { AppDispatch, RootState } from "../../redux/store";
+import bcrypt from "bcryptjs";
 
 interface User {
   username: string;
@@ -43,6 +44,7 @@ export default function SignUp(): JSX.Element {
       return;
     }
 
+    const hashedPassword = bcrypt.hashSync(password, 10);
     const user: User = {
       username,
       password,
@@ -51,7 +53,7 @@ export default function SignUp(): JSX.Element {
 
     try {
       await dispatch(signupUser(user)).unwrap();
-      navigate("/login");
+      navigate("/dashboard");
     } catch (err: any) {
       setError(err.message || "Signup failed. Please try again.");
     }

@@ -45,6 +45,15 @@ export const updatePost = createAsyncThunk<Post, Post>(
   }
 );
 
+// Delete a post from the API
+export const deletePost = createAsyncThunk<number, number>(
+  "posts/deletePost",
+  async (id) => {
+    await axios.delete(`${API_URL}/${id}`);
+    return id;
+  }
+);
+
 // Slice
 const postsSlice = createSlice({
   name: "posts",

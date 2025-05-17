@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../../redux/slices/authSlice";
 import { RootState, AppDispatch } from "../../redux/store";
+import bcrypt from "bcryptjs";
 
 export default function Login(): JSX.Element {
   const [username, setUsername] = useState<string>("");
@@ -16,14 +17,23 @@ export default function Login(): JSX.Element {
   const handleLogin = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
-      await dispatch(loginUser({ username, password })).unwrap();
+      // Fetch user by username
+      const response = await fetch(`http://localhost:5000/users?username=${username}`);
+      const users = await response.json();
+      if (users.length === 0) {
+        setError("Invalid username or password");
+        return;
+      }
+      const user = users[0];
+      // Compare password
+      if (!bcrypt.compareSync(password, user.password)) {
+        setError("Invalid username or password");
+        return;
+      }
+      await dispatch(loginUser({ username, password: user.password })).unwrap();
       navigate("/dashboard");
     } catch (err) {
-      if (typeof err === "object" && err !== null && "message" in err) {
-        setError((err as { message: string }).message);
-      } else {
-        setError("Login failed. Please try again.");
-      }
+      setError("Login failed. Please try again.");
     }
   };
 

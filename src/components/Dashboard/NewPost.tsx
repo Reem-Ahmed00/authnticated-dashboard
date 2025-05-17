@@ -1,43 +1,51 @@
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../../redux/slices/postsSlice";
 import { useNavigate } from "react-router-dom";
+import { RootState, AppDispatch } from "../../redux/store";
+import { Post, User } from "../../../types";
 
 export default function NewPost() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [error, setError] = useState("");
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.user);
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [image, setImage] = useState<string | ArrayBuffer | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(null);
+  const [error, setError] = useState<string>("");
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const user = useSelector<RootState, User | null>((state) => state.auth.user);
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImage(reader.result); // Store the base64 string
-        setImagePreview(reader.result); // Preview the image
+        setImage(reader.result);
+        setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!title || !content) {
       setError("Title and content are required.");
       return;
     }
 
-    const newPost = {
+    if (!user) {
+      setError("User not found. Please login.");
+      return;
+    }
+
+    const newPost: Post = {
       id: Date.now(),
       username: user.username,
       title,
       body: content,
-      image: image || "/images/blog.png", // Use base64 image or default image
+      image: (image as string) || "/images/blog.png",
     };
 
     dispatch(addPost(newPost));
@@ -46,7 +54,7 @@ export default function NewPost() {
     setImage(null);
     setImagePreview(null);
     setError("");
-    navigate("/posts"); // Navigate to posts page after creating the post
+    navigate("/posts");
   };
 
   return (
@@ -90,7 +98,7 @@ export default function NewPost() {
             <div className="mt-3">
               <p>Image Preview:</p>
               <img
-                src={imagePreview}
+                src={imagePreview as string}
                 alt="Preview"
                 style={{ width: "100%", maxHeight: "200px", objectFit: "cover" }}
               />

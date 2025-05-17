@@ -1,48 +1,58 @@
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent, JSX } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signupUser } from "../../redux/slices/authSlice";
 import { useNavigate, Link } from "react-router-dom";
+import { AppDispatch, RootState } from "../../redux/store";
 
-export default function SignUp() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [profileImage, setProfileImage] = useState(null);
-  const [profileImagePreview, setProfileImagePreview] = useState(null);
-  const [error, setError] = useState("");
-  const dispatch = useDispatch();
+interface User {
+  username: string;
+  password: string;
+  profileImage: string;
+}
+
+export default function SignUp(): JSX.Element {
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  const [error, setError] = useState<string>("");
+
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const authError = useSelector((state) => state.auth.error);
+  const authError = useSelector((state: RootState) => state.auth.error);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const file = e.target.files?.[0];
     if (file) {
       setProfileImage(file);
       setProfileImagePreview(URL.createObjectURL(file));
     }
   };
 
-  const handleSignup = async (e) => {
+  const handleSignup = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
       setError("Passwords do not match!");
       return;
     }
+
     if (username.length < 3 || password.length < 6) {
       setError("Username must be at least 3 characters and password at least 6 characters.");
       return;
     }
 
-    const user = {
+    const user: User = {
       username,
       password,
-      profileImage: profileImagePreview || "/assets/user.png", // Use default image if none is uploaded
+      profileImage: profileImagePreview || "/assets/user.png",
     };
 
     try {
       await dispatch(signupUser(user)).unwrap();
       navigate("/login");
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || "Signup failed. Please try again.");
     }
   };

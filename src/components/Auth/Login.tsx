@@ -1,23 +1,29 @@
-import { useState } from "react";
+import { useState, FormEvent, JSX } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../../redux/slices/authSlice";
 import { useNavigate, Link } from "react-router-dom";
+import { loginUser } from "../../redux/slices/authSlice";
+import { RootState, AppDispatch } from "../../redux/store";
 
-export default function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const dispatch = useDispatch();
+export default function Login(): JSX.Element {
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const authError = useSelector((state) => state.auth.error);
+  const authError = useSelector((state: RootState) => state.auth.error);
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
       await dispatch(loginUser({ username, password })).unwrap();
       navigate("/dashboard");
     } catch (err) {
-      setError(err.message || "Login failed. Please try again.");
+      if (typeof err === "object" && err !== null && "message" in err) {
+        setError((err as { message: string }).message);
+      } else {
+        setError("Login failed. Please try again.");
+      }
     }
   };
 
@@ -29,8 +35,9 @@ export default function Login() {
         {authError && <p className="text-danger">{authError}</p>}
         <form onSubmit={handleLogin}>
           <div className="mb-3">
-            <label>Username</label>
+            <label htmlFor="username" className="form-label">Username</label>
             <input
+              id="username"
               type="text"
               className="form-control"
               value={username}
@@ -39,8 +46,9 @@ export default function Login() {
             />
           </div>
           <div className="mb-3">
-            <label>Password</label>
+            <label htmlFor="password" className="form-label">Password</label>
             <input
+              id="password"
               type="password"
               className="form-control"
               value={password}
